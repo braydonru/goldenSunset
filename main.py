@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from sqlmodel import SQLModel
 from starlette.staticfiles import StaticFiles
@@ -15,8 +17,26 @@ from routes.product_router import product_router
 from routes.user_router import user_router
 from routes.order_routes import order_router
 from fastapi.middleware.cors import CORSMiddleware
+from config.db import engine, create_tables
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Maneja eventos de inicio y cierre
+    """
+    # Startup: crear tablas
+    print("🚀 Iniciando aplicación...")
+    create_tables()
+    print("✅ Base de datos lista!")
+
+    yield
+
+    # Shutdown
+    print("👋 Cerrando aplicación...")
 
 SQLModel.metadata.create_all(engine)
+
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -26,7 +46,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","http://127.0.0.1:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

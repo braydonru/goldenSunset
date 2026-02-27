@@ -1,17 +1,19 @@
-import os
+# config/db.py
+from sqlmodel import create_engine
+from pathlib import Path
 
-from sqlalchemy import Engine, create_engine
-from sqlmodel import SQLModel
-from dotenv import load_dotenv
+# Crear directorio database si no existe
+Path("database").mkdir(exist_ok=True)
 
-load_dotenv()
+# SQLite creará el archivo automáticamente
+engine = create_engine(
+    "sqlite:///database/app.db",
+    connect_args={"check_same_thread": False},
+    echo=True  # Muestra las consultas SQL en consola
+)
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
-
-url=f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
-
-engine=create_engine(url)
+def create_tables():
+    """Crea todas las tablas definidas en los modelos"""
+    from sqlmodel import SQLModel
+    SQLModel.metadata.create_all(engine)
+    print("✅ Tablas creadas/verificadas en database/app.db")
