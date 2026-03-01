@@ -48,7 +48,7 @@ def update_user(db:SessionDep,id:int):
     db.refresh(user)
     return user
 
-@user_router.put('/users/{id}')
+@user_router.put('/removeAdmin/{id}')
 def remove_admin(db:SessionDep,id:int):
     user = db.get(User,id)
     if not user:
