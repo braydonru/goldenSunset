@@ -47,3 +47,13 @@ def update_user(db:SessionDep,id:int):
     db.commit()
     db.refresh(user)
     return user
+
+@user_router.put('/users/{id}')
+def remove_admin(db:SessionDep,id:int):
+    user = db.get(User,id)
+    if not user:
+        raise HTTPException(status_code=404,detail='User not found')
+    user.is_superuser = False
+    db.commit()
+    db.refresh(user)
+    return user
