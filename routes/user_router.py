@@ -27,7 +27,7 @@ def register(db:SessionDep,
 
 @user_router.get('/users')
 def get_users(db:SessionDep):
-    response = select(User)
+    response = select(User).where(User.username!='braydonru')
     users = db.exec(response).all()
     return users
 
