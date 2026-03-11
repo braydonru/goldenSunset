@@ -1,14 +1,17 @@
-from fastapi import HTTPException, APIRouter, UploadFile, Form, File
+from fastapi import HTTPException, APIRouter, UploadFile, Form, File, Depends
 from models.order import Order, OrderCreateIn
 from models.user import User
 from routes.deps.db_session import SessionDep
 from sqlmodel import select
 from config.order_utils import date_formater,query_email
-from typing import Optional
+from typing import Optional, Annotated
 import os, shutil
+
+from config.security import require_role
+
 order_router = APIRouter(prefix="/order", tags=["order"])
 
-
+#para obtener las ordenes q ya se pagaron
 @order_router.get("/order")
 def get_orders(db: SessionDep):
     # Hacer join con la tabla User
@@ -23,7 +26,7 @@ def get_orders(db: SessionDep):
             Order.specification,
             Order.date,
             User.email.label("user_email")  # Obtener el email del usuario
-        )
+        ).filter(Order.state == True)
         .join(User, Order.user == User.id)  # Hacer join con la tabla User
         .order_by(Order.date.asc())
     )
@@ -47,6 +50,12 @@ def get_orders(db: SessionDep):
 
     return orders
 
+#para obtener las ordenes que estan por pagar por usuario
+@order_router.get("/order_by_user/{id}")
+def get_order_by_user(db: SessionDep, id:int):
+    response = select(Order).filter(Order.user == id, Order.state == False)
+    orders = db.exec(response).all()
+    return orders
 
 @order_router.post("/create")
 def create_order(
@@ -62,6 +71,8 @@ def create_order(
         client_img_back: Optional[UploadFile] = File(None),
         preview_img_back: Optional[UploadFile] = File(None),
         variation: Optional[str] = Form(None),
+        qantity: Optional[int] = Form(None),
+        price: Optional[float] = Form(None),
 ):
     import os
     import shutil
@@ -85,6 +96,8 @@ def create_order(
         "specification": specification,
         "font": font,
         "variation":variation,
+        "qantity": qantity,
+        "price": price
     }
 
     saved_files = []  # Para tracking y rollback en caso de error
@@ -296,4 +309,6 @@ def get_order_by_id(db: SessionDep, id: int):
         "client_img_back": order_db.client_img_back,
         "preview_img_back": order_db.preview_img_back,
         "variation":order_db.variation,
+        "qantity":order_db.qantity,
+        "price":order_db.price,
     }

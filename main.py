@@ -16,6 +16,7 @@ from models import *
 from routes.product_router import product_router
 from routes.user_router import user_router
 from routes.order_routes import order_router
+from routes.stripe_routes import stripe_router
 from fastapi.middleware.cors import CORSMiddleware
 from config.db import engine, create_tables
 
@@ -46,7 +47,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*","172.20.10.11:3000","http://localhost:3000"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,3 +72,5 @@ app.include_router(product_variant_router)
 app.include_router(reviews_router)
 
 app.include_router(design_router)
+
+app.include_router(stripe_router)

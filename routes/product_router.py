@@ -92,3 +92,10 @@ def activate_product(db:SessionDep,id:int,user:Annotated[str,Depends(require_rol
     product_db.enable=True
     db.commit()
     return None
+
+@product_router.get("/{product_id}")
+def get_product(db: SessionDep, product_id: int):
+    product = db.get(Product, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product

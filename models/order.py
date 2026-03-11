@@ -25,6 +25,10 @@ class Order(SQLModel, table=True):
 
     date:datetime = Field(default_factory=datetime.now)
 
+    qantity:Optional[int] = Field(default=1)
+    state:bool = Field(default=False)
+    price:int = Field(default=0)
+
     def delete_images(self, static_dir: str = "static"):
 
         image_fields = [
