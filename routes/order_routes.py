@@ -6,7 +6,7 @@ from sqlmodel import select
 from config.order_utils import date_formater,query_email
 from typing import Optional, Annotated
 import os, shutil
-
+import uuid
 from config.security import require_role
 
 order_router = APIRouter(prefix="/order", tags=["order"])
