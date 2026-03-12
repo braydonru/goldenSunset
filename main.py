@@ -47,9 +47,9 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://golden-sunset-front.vercel.app",
+    allow_origins=[
                    "http://localhost:3000",
-                   "https://*.vercel.app",
+                   "https://https://golden-sunset-front-q5udvwbzl-braydonru1234-2254s-projects.vercel.app",
                   ],
     allow_credentials=True,
     allow_methods=["*"],
