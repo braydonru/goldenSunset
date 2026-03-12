@@ -49,6 +49,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://golden-sunset-front.vercel.app",
                    "http://localhost:3000",
+                   "https://*.vercel.app",
                   ],
     allow_credentials=True,
     allow_methods=["*"],
