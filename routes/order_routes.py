@@ -74,11 +74,6 @@ def create_order(
         qantity: Optional[int] = Form(None),
         price: Optional[float] = Form(None),
 ):
-    import os
-    import shutil
-    import uuid
-    from fastapi import HTTPException
-
 
     user_exists = db.query(User).filter(User.id == user).first()
     if not user_exists:
