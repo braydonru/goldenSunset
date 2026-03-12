@@ -50,6 +50,7 @@ app.add_middleware(
     allow_origins=[
                    "http://localhost:3000",
                    "https://golden-sunset-front-q5udvwbzl-braydonru1234-2254s-projects.vercel.app",
+                   "https://golden-sunset-front.vercel.app",
                   ],
     allow_credentials=True,
     allow_methods=["*"],
